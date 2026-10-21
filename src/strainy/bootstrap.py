@@ -16,8 +16,8 @@ def am_i_colab():
     state = (
         os.path.exists("/content")
         and os.environ.get("HOME") == "/root"
-        and "DATALAB_SETTINGS_OVERRIDES" in os.environ
-        and "COLAB_GPU" in os.environ
+        and "COLAB_JUPYTER_IP" in os.environ
+        and "COLAB_IMAGE_TYPE" in os.environ
     )
     return state
 
