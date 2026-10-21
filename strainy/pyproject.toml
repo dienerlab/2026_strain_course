@@ -1,0 +1,23 @@
+[project]
+name = "strainy"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Christian Diener", email = "ch.diener@gmail.com" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "cobra>=0.32.1",
+    "pyrodigal>=3.7.1",
+    "requests>=2.34.2",
+    "rich>=15.0.0",
+    "seaborn>=0.13.2",
+]
+
+[project.scripts]
+bootstrap = "strain_course.bootstrap:main"
+
+[build-system]
+requires = ["uv_build>=0.13.3,<0.14.0"]
+build-backend = "uv_build"
