@@ -6,15 +6,16 @@ import os
 from pathlib import Path
 import shutil
 from hashlib import sha256
-from importlib.resources import files
 from rich.console import Console
 import seaborn as sns
 
-BASE = files("strainy") / "../../data"
-print(BASE)
+BASE = Path("data")
 
 num_genomes = 51
-assemblies = pd.read_csv(BASE / "strain_manifest.csv")
+assemblies = pd.read_csv(
+    "https://raw.githubusercontent.com/dienerlab/2026_strain_course/"
+    "refs/heads/main/data/strain_manifest.csv"
+)
 
 prefix_map = pd.Series({
     "d": "domain",
@@ -58,6 +59,12 @@ def gimme_genome(name : str):
         )
         return
 
+    if not BASE.exists():
+        con.print(
+            "Please run this in the [bold red]materials directory[/bold red], "
+            "where the data folder is located. :face_with_raised_eyebrow:"
+        )
+
     if name not in secret_names:
         magic_number = int(sha256(name.encode()).hexdigest(), 16) % num_genomes
         con.print(
@@ -92,6 +99,12 @@ def gimme_genome(name : str):
 
 def gimme_abundances():
     """Return a MICOM abundance table."""
+    if not BASE.exists():
+        con.print(
+            "Please run this in the [bold red]materials directory[/bold red], "
+            "where the data folder is located. :face_with_raised_eyebrow:"
+        )
+
     return pd.read_csv(BASE / "abundances.csv")
 
 
