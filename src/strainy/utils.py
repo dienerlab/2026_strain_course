@@ -1,16 +1,18 @@
 """Some helpers for the course."""
 
 import gzip
+import requests
 import pandas as pd
 import os
 from pathlib import Path
 import shutil
 from hashlib import sha256
+from tempfile import TemporaryFile
 from rich.console import Console
 import seaborn as sns
 
 BASE = Path(".")
-DATA_URL = "https://github.com/dienerlab/2026_strain_course/raw/refs/heads/main/data/genomes/"
+DATA_URL = "https://raw.githubusercontent.com/dienerlab/2026_strain_course/refs/heads/main/data/"
 
 num_genomes = 51
 assemblies = pd.read_csv(
@@ -36,7 +38,7 @@ secret_names = {
 def download_gzip(url, filename):
     """Download and extract a gzipped URL to a file."""
     req = requests.get(url, stream=True)
-    with TemporaryFile(suffix="xml.gz") as tfile:
+    with TemporaryFile(suffix="fna.gz") as tfile:
         for chunk in req.iter_content(chunk_size=1024):
             if chunk:
                 tfile.write(chunk)
@@ -105,19 +107,19 @@ def gimme_genome(name : str):
 
     try:
         download_gzip(DATA_URL + assembly["file"], BASE / f"{aid}.fna")
-    except Exception:
+    except Exception as e:
         con.print(
             "[dark_orange]Uh oh, looks like something went wrong downloading. "
             "Just run the cell again and everything should work :smile:."
         )
+        con.print(f"[dark_orange]Error message: {e}[/dark_orange]")
         return
-    con.print(f"Saved the assembly to [green]{{aid}}.fna[/green].")
+    con.print(f"Saved the assembly to [green]{aid}.fna[/green].")
     con.print(
         f"Wow! Your assembly is [green]{aid}[/green] which is "
         f"[green]{assembly['strain']}[/green] :exploding_head: \n"
         f"By the way, the full GTDB taxonomic assignment is {' | '.join(taxa)} :nerd_face:"
     )
-    return aid
 
 
 def gimme_abundances():
