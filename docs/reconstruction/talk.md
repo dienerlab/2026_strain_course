@@ -37,7 +37,7 @@ Let's get the slides first (use your computer, phone, TV, fridge)
 
 <br>
 
-<a href="https://colab.research.google.com/github/gibbons-lab/isb_course_2021/blob/main/models.ipynb"
+<a href="https://colab.research.google.com/github/dienerlab/2026_strain_course/blob/main/models.ipynb"
    target="_blank">Click me to open the notebook!</a>
 
 ---
@@ -216,22 +216,6 @@ What's a reasonable requirement that you'd attribute to a living bacterium?
 
 ---
 
-<!-- .slide: data-background="assets/isb/microbes-midnight.jpg" class="dark" -->
-
-# The BIO-ML collection
-
-Sequenced 3,632 bacterial isolates from the human gut at the Broad Institute.
-
-Each participant will get a randomly assigned assembly from ~980 of those.
-
-<div class="footnote">
-
-https://doi.org/10.1038/s41591-019-0559-3
-
-</div>
-
----
-
 ## Your turn
 
 <img src="assets/coding.gif" width="50%">
@@ -260,7 +244,7 @@ Can we constrain the flux space even further?
 
 ---
 
-<!-- .slide: data-background="var(--secondary)" class="dark" -->
+<!-- .slide: data-background="var(--primary)" class="dark" -->
 
 FBA results strongly depend on the *environmental conditions*. Finding
 uptake constraints is *critical* for realistic results.

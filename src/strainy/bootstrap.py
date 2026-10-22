@@ -11,10 +11,10 @@ GASPEQ_APT = [
 ]
 
 
-def srun(cmd):
+def srun(cmd, check=True):
     """Run a subprocess and print the command."""
     result = subprocess.run(cmd, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False)
-    if result.returncode != 0:
+    if result.returncode != 0 and check:
         con.print(f"[bold red]Error running command:[/bold red] {' '.join(cmd)}")
         con.print(f"[bold red]Error message:[/bold red] {result.stderr}")
     return result
@@ -23,11 +23,11 @@ def srun(cmd):
 def has_gapseq():
     """Check if gapseq is installed."""
     try:
-        r = srun(["gapseq", "-h"])
+        r = srun(["gapseq", "-h"], check=False)
     except FileNotFoundError:
         return False
 
-    status = (r.returncode == 0) & ("try to find enzymes" in r.stdout)
+    status = (r.returncode < 2) & ("try to find enzymes" in r.stdout)
     return status
 
 
