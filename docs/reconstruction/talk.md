@@ -78,31 +78,6 @@ video courtesy of [S. Nayyak](https://twitter.com/Na_y_ak) and [J. Iwasa](https:
 
 </div>
 
----
-
-<!-- .slide: data-background="var(--secondary)" class="dark" -->
-
-# Flux Balance Analysis (FBA)
-
-Can we infer the most likely fluxes in a biological system, given a set of environmental constraints, if we know all
-available metabolic reactions?
-
----
-
-## The flux cone
-
-<img src="assets/flux_cone.png" width="100%">
-
-
----
-
-The goal of FBA is to *reduce* the overall flux space to a *biologically relevant* one.
-
----
-
-## Genome-scale metabolic modeling
-
-<img src="assets/fba.png" width="100%">
 
 ---
 
@@ -221,6 +196,32 @@ What's a reasonable requirement that you'd attribute to a living bacterium?
 <img src="assets/coding.gif" width="50%">
 
 Let's go from an isolate genome assembly to a genome-scale metabolic model.
+
+---
+
+<!-- .slide: data-background="var(--secondary)" class="dark" -->
+
+# Flux Balance Analysis (FBA)
+
+Can we infer the most likely fluxes in a biological system, given a set of environmental constraints, if we know all
+available metabolic reactions?
+
+---
+
+## The flux cone
+
+<img src="assets/flux_cone.png" width="100%">
+
+
+---
+
+The goal of FBA is to *reduce* the overall flux space to a *biologically relevant* one.
+
+---
+
+## Genome-scale metabolic modeling
+
+<img src="assets/fba.png" width="100%">
 
 ---
 

@@ -3,10 +3,11 @@
 import os
 import shutil
 import subprocess
-from .utils import con
+from tempfile import TemporaryDirectory
+from .utils import con, download
 
 GASPEQ_APT = [
-    'apt-get', 'install', '-y', 'ncbi-blast+', 'git', 'libglpk-dev', 'r-base-core', 'bc',
+    'apt-get', 'install', '-y', 'ncbi-blast+', 'git', 'libglpk-dev', 'r-base-core', 'bc', 'hmmer',
     'curl', 'libcurl4-openssl-dev', 'libssl-dev', 'libsbml5-dev', 'diamond-aligner', 'mmseqs2'
 ]
 
@@ -49,13 +50,13 @@ def install_gapseq():
             ":fearful: This does not look like Colab, I better not touch anything."
         )
 
-    con.print(":hammer: Installing [green]gapseq[/green] dependencies [gray][15 m][/gray].")
+    con.print(":hammer: Installing [green]gapseq[/green] dependencies [gray][18 m][/gray].")
     srun(GASPEQ_APT)
-    srun(["R", "-s", "-e", 'install.packages(c("data.table", "stringr", "getopt", "R.utils", "stringi", "jsonlite", "httr", "pak"))'])
+    srun(["R", "-s", "-e", 'install.packages(c("data.table", "stringr", "getopt", "R.utils", "stringi", "jsonlite", "httr", "pak", "getopt"))'])
     srun(["R", "-s", "-e",  'if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager"); BiocManager::install("Biostrings")'])
     srun(["R", "-s", "-e", 'pak::pkg_install("Waschina/cobrar")'])
     con.print(":hammer: Done.")
-    con.print(":hammer: Installing [green]gapseq[/green] [gray][2 m][/gray].")
+    con.print(":hammer: Installing [green]gapseq[/green] [gray][1 m][/gray].")
     srun(["git", "clone", "https://github.com/jotech/gapseq", "/usr/local/gapseq"])
     srun(["ln", "-s", "/usr/local/gapseq/gapseq", "/usr/local/bin/gapseq"])
     srun(["chmod", "+x", "/usr/local/gapseq/gapseq"])
@@ -66,6 +67,16 @@ def install_gapseq():
     con.print(":hammer: Done.")
 
 
+def install_seqkit():
+    with TemporaryDirectory() as tmpdir:
+        con.print(":hammer: Installing [green]seqkit[/green] [gray][1 m][/gray].")
+        download(SEQKIT_URL, f"{tmpdir}/seqkit.tar.gz")
+        srun(["tar", "-xzf", f"{tmpdir}/seqkit.tar.gz"])
+        srun(["chmod", "+x", f"{tmpdir}/seqkit/seqkit"])
+        srun(["mv", f"{tmpdir}/seqkit/seqkit", "/usr/local/bin/seqkit"])
+        con.print(":hammer: Done.")
+
+
 def main():
     """Install some dependencies."""
     if am_i_colab():
@@ -73,6 +84,9 @@ def main():
             install_gapseq()
         else:
             con.print(":white_check_mark: [green]gapseq[/green] is already installed.")
+
+        install_seqkit()
+
         if os.path.exists("/content/sample_data"):
             shutil.rmtree("/content/sample_data")
         con.print(":hammer: All clean now.")
