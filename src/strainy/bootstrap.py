@@ -2,13 +2,21 @@
 
 import os
 import shutil
-from subprocess import run as srun
+import subprocess
 from .utils import con
 
 GASPEQ_APT = [
     'apt-get', 'install', '-y', 'ncbi-blast+', 'git', 'libglpk-dev', 'r-base-core', 'bc',
     'curl', 'libcurl4-openssl-dev', 'libssl-dev', 'libsbml5-dev', 'diamond-aligner', 'mmseqs2'
 ]
+
+
+def srun(cmd):
+    """Run a subprocess and print the command."""
+    result = subprocess.run(cmd, text=True, capture_output=True)
+    if result.returncode != 0:
+        con.print(f"[bold red]Error running command:[/bold red] {' '.join(cmd)}")
+        con.print(f"[bold red]Error message:[/bold red] {result.stderr}")
 
 
 def am_i_colab():
@@ -30,19 +38,19 @@ def install_gapseq():
         )
 
     con.print(":hammer: Installing [green]gapseq[/green] dependencies.")
-    srun(GASPEQ_APT, check=True)
-    srun(["R", "-e", 'install.packages(c("data.table", "stringr", "getopt", "R.utils", "stringi", "jsonlite", "httr", "pak"))'], check=True)
-    srun(["R", "-e",  'if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager"); BiocManager::install("Biostrings")'], check=True)
-    srun(["R", "-e", 'pak::pkg_install("Waschina/cobrar")'], check=True)
+    srun(GASPEQ_APT)
+    srun(["R", "-e", 'install.packages(c("data.table", "stringr", "getopt", "R.utils", "stringi", "jsonlite", "httr", "pak"))'])
+    srun(["R", "-e",  'if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager"); BiocManager::install("Biostrings")'])
+    srun(["R", "-e", 'pak::pkg_install("Waschina/cobrar")'])
     con.print(":hammer: Done.")
     con.print(":hammer: Installing [green]gapseq[/green].")
-    srun(["git", "clone", "https://github.com/jotech/gapseq", "/usr/local/gapseq"], check=True)
-    srun(["ln", "-s", "/usr/local/gapseq/gapseq", "/usr/local/bin/gapseq"], check=True)
-    srun(["chmod", "+x", "/usr/local/gapseq/gapseq"], check=True)
+    srun(["git", "clone", "https://github.com/jotech/gapseq", "/usr/local/gapseq"])
+    srun(["ln", "-s", "/usr/local/gapseq/gapseq", "/usr/local/bin/gapseq"])
+    srun(["chmod", "+x", "/usr/local/gapseq/gapseq"])
     con.print(":hammer: Done.")
     con.print(":hammer: Installing [green]gapseq[/green] databases.")
-    srun(["/usr/local/gapseq/gapseq", "update-sequences", "-t", "Bacteria"], check=True)
-    srun(["/usr/local/gapseq/gapseq", "update-sequences", "-t", "Archaea"], check=True)
+    srun(["/usr/local/gapseq/gapseq", "update-sequences", "-t", "Bacteria"])
+    srun(["/usr/local/gapseq/gapseq", "update-sequences", "-t", "Archaea"])
     con.print(":hammer: Done.")
 
 
