@@ -11,6 +11,7 @@ GASPEQ_APT = [
     'curl', 'libcurl4-openssl-dev', 'libssl-dev', 'libsbml5-dev', 'diamond-aligner', 'mmseqs2'
 ]
 
+SEQKIT_URL = "https://github.com/shenwei356/seqkit/releases/download/v2.14.0/seqkit_linux_amd64.tar.gz"
 
 def srun(cmd, check=True):
     """Run a subprocess and print the command."""
@@ -42,7 +43,7 @@ def am_i_colab():
     )
     return state
 
-
+https://github.com/shenwei356/seqkit/releases/download/v2.14.0/seqkit_linux_amd64.tar.gz
 def install_gapseq():
     """Install gapseq."""
     if not am_i_colab():
