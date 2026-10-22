@@ -43,7 +43,7 @@ def am_i_colab():
     )
     return state
 
-https://github.com/shenwei356/seqkit/releases/download/v2.14.0/seqkit_linux_amd64.tar.gz
+
 def install_gapseq():
     """Install gapseq."""
     if not am_i_colab():
