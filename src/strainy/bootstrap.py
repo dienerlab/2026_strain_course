@@ -6,7 +6,7 @@ from subprocess import run as srun
 from .utils import con
 
 GASPEQ_APT = [
-    'sudo', 'apt-get', 'install', '-y', 'install', 'ncbi-blast+', 'git', 'libglpk-dev', 'r-base-core', 'bc',
+    'apt-get', 'install', '-y', 'install', 'ncbi-blast+', 'git', 'libglpk-dev', 'r-base-core', 'bc',
     'curl', 'libcurl4-openssl-dev', 'libssl-dev', 'libsbml5-dev', 'diamond-aligner', 'mmseqs2'
 ]
 
