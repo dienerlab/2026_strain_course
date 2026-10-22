@@ -13,7 +13,7 @@ GASPEQ_APT = [
 
 def srun(cmd):
     """Run a subprocess and print the command."""
-    result = subprocess.run(cmd, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    result = subprocess.run(cmd, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False)
     if result.returncode != 0:
         con.print(f"[bold red]Error running command:[/bold red] {' '.join(cmd)}")
         con.print(f"[bold red]Error message:[/bold red] {result.stderr}")
