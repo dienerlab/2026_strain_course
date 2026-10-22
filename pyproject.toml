@@ -4,14 +4,14 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 authors = [
-    { name = "Christian Diener", email = "ch.diener@gmail.com" }
+    { name = "Christian Diener", email = "mail [at] cdiener.com" }
 ]
 requires-python = ">=3.12"
 dependencies = [
     "cobra>=0.32.1",
     "pyrodigal>=3.7.1",
-    "requests>=2.34.2",
-    "rich>=15.0.0",
+    "requests>=2.32.0",
+    "rich>=13.0.0",
     "seaborn>=0.13.2",
 ]
 
