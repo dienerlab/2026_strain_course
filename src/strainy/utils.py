@@ -20,15 +20,7 @@ assemblies = pd.read_csv(
     "refs/heads/main/data/strain_manifest.csv"
 )
 
-prefix_map = pd.Series({
-    "d": "domain",
-    "p": "phylum",
-    "c": "class",
-    "o": "order",
-    "f": "family",
-    "g": "genus",
-    "s": "species"
-})
+
 con = Console()
 secret_names = {
     "Christian Diener": 50,
@@ -131,6 +123,19 @@ def gimme_manifest():
     """Return the strain manifest."""
     download(DATA_URL + "strain_manifest.csv", BASE / "strain_manifest.csv")
     return pd.read_csv(BASE / "strain_manifest.csv")
+
+
+def gimme_medium(format="gapseq"):
+    """Return the medium."""
+    med = pd.read_csv(DATA_URL + "gut_medium_gapseq.csv")
+    if format == "gapseq":
+        return med
+    elif format == "micom":
+        med = med.rename(columns={"compounds": "metabolite", "maxFlux": "flux"})
+        med["reaction"] = "EX_" + med["metabolite"] + "_m"
+        return med
+    else:
+        raise ValueError("format must be 'gapseq' or 'micom'.")
 
 
 def colormap(series : pd.Series):

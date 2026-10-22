@@ -12,5 +12,7 @@ wheels/
 # course stuff
 /*.fna
 /*.csv
+/*.xml
+/*.html
 
 illustrations
