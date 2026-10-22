@@ -9,7 +9,8 @@ from hashlib import sha256
 from rich.console import Console
 import seaborn as sns
 
-BASE = Path("data")
+BASE = Path(".")
+DATA_URL = "https://github.com/dienerlab/2026_strain_course/raw/refs/heads/main/data/genomes/"
 
 num_genomes = 51
 assemblies = pd.read_csv(
@@ -31,6 +32,28 @@ secret_names = {
     "Christian Diener": 50,
     "Geoffrey Olweny": 51
 }
+
+def download_gzip(url, filename):
+    """Download and extract a gzipped URL to a file."""
+    req = requests.get(url, stream=True)
+    with TemporaryFile(suffix="xml.gz") as tfile:
+        for chunk in req.iter_content(chunk_size=1024):
+            if chunk:
+                tfile.write(chunk)
+                tfile.flush()
+        tfile.seek(0)
+        with gzip.open(tfile, "rb") as inf, open(filename, "wb") as outf:
+            shutil.copyfileobj(inf, outf)
+
+
+def download(url, filename):
+    """Download URL to a file."""
+    req = requests.get(url, stream=True)
+    with open(filename, "wb") as f:
+        for chunk in req.iter_content(chunk_size=1024):
+            if chunk:
+                f.write(chunk)
+                f.flush()
 
 
 def unzip(infile : Path, outfile : Path):
@@ -81,7 +104,7 @@ def gimme_genome(name : str):
     taxa = assembly[["domain", "phylum", "class", "order", "family", "genus", "species", "strain"]].values
 
     try:
-        unzip(BASE / Path(assembly["file"]), BASE / f"{aid}.fna")
+        download_gzip(DATA_URL + assembly["file"], BASE / f"{aid}.fna")
     except Exception:
         con.print(
             "[dark_orange]Uh oh, looks like something went wrong downloading. "
@@ -99,13 +122,13 @@ def gimme_genome(name : str):
 
 def gimme_abundances():
     """Return a MICOM abundance table."""
-    if not BASE.exists():
-        con.print(
-            "Please run this in the [bold red]materials directory[/bold red], "
-            "where the data folder is located. :face_with_raised_eyebrow:"
-        )
+    return pd.read_csv(DATA_URL + "abundances.csv")
 
-    return pd.read_csv(BASE / "abundances.csv")
+
+def gimme_manifest():
+    """Return the strain manifest."""
+    download(DATA_URL + "strain_manifest.csv", BASE / "strain_manifest.csv")
+    return pd.read_csv(BASE / "strain_manifest.csv")
 
 
 def colormap(series : pd.Series):
