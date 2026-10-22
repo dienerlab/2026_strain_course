@@ -13,7 +13,7 @@ GASPEQ_APT = [
 
 def srun(cmd):
     """Run a subprocess and print the command."""
-    result = subprocess.run(cmd, text=True, capture_output=True)
+    result = subprocess.run(cmd, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     if result.returncode != 0:
         con.print(f"[bold red]Error running command:[/bold red] {' '.join(cmd)}")
         con.print(f"[bold red]Error message:[/bold red] {result.stderr}")
@@ -49,8 +49,7 @@ def install_gapseq():
     srun(GASPEQ_APT)
     srun(["R", "-s", "-e", 'install.packages(c("data.table", "stringr", "getopt", "R.utils", "stringi", "jsonlite", "httr", "pak"))'])
     srun(["R", "-s", "-e",  'if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager"); BiocManager::install("Biostrings")'])
-    srun(["R", "-s",
-    "-e", 'pak::pkg_install("Waschina/cobrar")'])
+    srun(["R", "-s", "-e", 'pak::pkg_install("Waschina/cobrar")'])
     con.print(":hammer: Done.")
     con.print(":hammer: Installing [green]gapseq[/green].")
     srun(["git", "clone", "https://github.com/jotech/gapseq", "/usr/local/gapseq"])
