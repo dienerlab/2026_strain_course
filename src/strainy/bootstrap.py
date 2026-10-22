@@ -72,8 +72,7 @@ def install_seqkit():
     with TemporaryDirectory() as tmpdir:
         con.print(":hammer: Installing [green]seqkit[/green] [gray][1 m][/gray].")
         download(SEQKIT_URL, f"{tmpdir}/seqkit.tar.gz")
-        srun(["tar", "-xzf", f"{tmpdir}/seqkit.tar.gz"])
-        print(srun(["ls", tmpdir]).stdout)
+        srun(["tar", "-xzf", f"{tmpdir}/seqkit.tar.gz", "-C", tmpdir])
         srun(["chmod", "+x", f"{tmpdir}/seqkit"])
         srun(["mv", f"{tmpdir}/seqkit", "/usr/local/bin/seqkit"])
         con.print(":hammer: Done.")
