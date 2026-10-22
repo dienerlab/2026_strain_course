@@ -22,7 +22,11 @@ def srun(cmd):
 
 def has_gapseq():
     """Check if gapseq is installed."""
-    r = srun(["gapseq", "-h"])
+    try:
+        r = srun(["gapseq", "-h"])
+    except FileNotFoundError:
+        return False
+
     status = (r.returncode == 0) & ("try to find enzymes" in r.stdout)
     return status
 
