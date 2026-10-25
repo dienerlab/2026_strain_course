@@ -138,6 +138,17 @@ def gimme_medium(format="gapseq"):
         raise ValueError("format must be 'gapseq' or 'micom'.")
 
 
+def gimme_strain_db():
+    """Return the strain database."""
+    from micom.db import load_zip_model_db
+
+    download(DATA_URL + "data/infants_gtdb232_strain_1.zip", BASE / "infants_gtdb232_strain_1.zip")
+    with TemporarfyDirectory() as tmpdir:
+        man = load_zip_model_db(BASE / "infants_gtdb232_strain_1.zip", tmpdir)
+
+    return man
+
+
 def colormap(series : pd.Series):
     """Build a discrete colormap for a bunch of strings."""
     levels = series.unique()
