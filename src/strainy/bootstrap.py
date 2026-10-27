@@ -53,9 +53,9 @@ def install_gapseq():
 
     con.print(":hammer: Installing [green]gapseq[/green] dependencies [gray][18 m][/gray].")
     srun(GASPEQ_APT)
-    srun(["R", "-s", "-e", 'install.packages(c("data.table", "stringr", "getopt", "R.utils", "stringi", "jsonlite", "httr", "pak", "getopt"))'])
-    srun(["R", "-s", "-e",  'if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager"); BiocManager::install("Biostrings")'])
-    srun(["R", "-s", "-e", 'pak::pkg_install("Waschina/cobrar")'])
+    srun(["R", "-s", "-e", 'install.packages(c("data.table", "stringr", "getopt", "R.utils", "stringi", "jsonlite", "httr", "pak", "getopt"), repos=c("https://bioc.r-universe.dev", "https://cran.r-universe.dev"))'])
+    srun(["R", "-s", "-e",  'install.packages("Biostrings", repos=c("https://bioc.r-universe.dev", "https://cran.r-universe.dev"))'])
+    srun(["R", "-s", "-e", 'pak::repo_add(bioc = "https://bioc.r-universe.dev", runi = "https://cran.r-universe.dev"); pak::pkg_install("Waschina/cobrar")'])
     con.print(":hammer: Done.")
     con.print(":hammer: Installing [green]gapseq[/green] [gray][1 m][/gray].")
     srun(["git", "clone", "https://github.com/jotech/gapseq", "/usr/local/gapseq"])
