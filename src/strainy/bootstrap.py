@@ -19,12 +19,13 @@ def srun(cmd, check=True):
     if result.returncode != 0 and check:
         con.print(f"[bold red]Error running command:[/bold red] {' '.join(cmd)}")
         con.print(f"[bold red]Error message:[/bold red] {result.stderr}")
+        raise RuntimeError(f"Command failed with return code {result.returncode}")
     return result
 
 
 def r_packages(pkgs):
     """Install R packages."""
-    cmd = f'install.packages(c({", ".join(["\"{pkg}\"" for pkg in pkgs])}))'
+    cmd = f'install.packages(c({", ".join(["\"" + {pkg} + "\"" for pkg in pkgs])}))'
     return cmd
 
 
