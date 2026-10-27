@@ -25,7 +25,7 @@ def srun(cmd, check=True):
 
 def r_packages(pkgs):
     """Install R packages."""
-    cmd = f'install.packages(c({", ".join(["\"" + {pkg} + "\"" for pkg in pkgs])}))'
+    cmd = f'install.packages(c({", ".join(["\"" + pkg + "\"" for pkg in pkgs])}))'
     return cmd
 
 
