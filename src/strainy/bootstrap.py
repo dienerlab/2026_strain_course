@@ -59,8 +59,8 @@ def install_gapseq():
 
     con.print(":hammer: Installing [green]gapseq[/green] dependencies [gray][18 m][/gray].")
     srun(GASPEQ_APT)
-    srun(["R", "-s", "-e", r_packages(["data.table", "stringr", "getopt", "R.utils", "stringi", "jsonlite", "httr", "pak", "getopt"])])
-    srun(["R", "-s", "-e",  r_packages(["Biostrings"]))
+    srun(["R", "-s", "-e", r_packages(["data.table", "stringr", "getopt", "R.utils", "stringi", "jsonlite", "httr", "pak", "getopt, BiocManager"])])
+    srun(["R", "-s", "-e", "BiocManager::install('Biostrings')"])
     srun(["R", "-s", "-e", 'pak::pkg_install("Waschina/cobrar")'])
     con.print(":hammer: Done.")
     con.print(":hammer: Installing [green]gapseq[/green] [gray][1 m][/gray].")
