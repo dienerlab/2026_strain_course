@@ -7,7 +7,7 @@ import os
 from pathlib import Path
 import shutil
 from hashlib import sha256
-from tempfile import TemporaryFile
+from tempfile import TemporaryFile, TemporaryDirectory
 from rich.console import Console
 import seaborn as sns
 
@@ -143,7 +143,7 @@ def gimme_strain_db():
     from micom.db import load_zip_model_db
 
     download(DATA_URL + "data/infants_gtdb232_strain_1.zip", BASE / "infants_gtdb232_strain_1.zip")
-    with TemporarfyDirectory() as tmpdir:
+    with TemporaryDirectory() as tmpdir:
         man = load_zip_model_db(BASE / "infants_gtdb232_strain_1.zip", tmpdir)
 
     return man
