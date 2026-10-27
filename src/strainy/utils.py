@@ -13,7 +13,6 @@ import seaborn as sns
 
 BASE = Path(".")
 DATA_URL = "https://raw.githubusercontent.com/dienerlab/2026_strain_course/refs/heads/main/data/"
-
 num_genomes = 51
 assemblies = pd.read_csv(
     "https://raw.githubusercontent.com/dienerlab/2026_strain_course/"
@@ -142,7 +141,7 @@ def gimme_strain_db():
     """Return the strain database."""
     from micom.db import load_zip_model_db
 
-    download(DATA_URL + "data/infants_gtdb232_strain_1.zip", BASE / "infants_gtdb232_strain_1.zip")
+    download(DATA_URL + "infants_gtdb232_strain_1.zip", BASE / "infants_gtdb232_strain_1.zip")
     with TemporaryDirectory() as tmpdir:
         man = load_zip_model_db(BASE / "infants_gtdb232_strain_1.zip", tmpdir)
 
