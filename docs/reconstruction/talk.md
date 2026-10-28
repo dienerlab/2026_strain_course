@@ -1,4 +1,4 @@
-<!-- .slide: data-background="assets/isb/data-midnight.jpg" class="dark" -->
+<!-- .slide: data-background="assets/backdrop.webp" class="dark" -->
 
 ## Strain-level metabolic modeling of microbial communities
 
@@ -37,7 +37,7 @@ Let's get the slides first (use your computer, phone, TV, fridge)
 
 <br>
 
-<a href="https://colab.research.google.com/github/dienerlab/2026_strain_course/blob/main/models.ipynb"
+<a href="https://colab.research.google.com/github/dienerlab/2026_strain_course/blob/main/reconstruction.ipynb"
    target="_blank">Click me to open the notebook!</a>
 
 ---
@@ -188,6 +188,7 @@ What's a reasonable requirement that you'd attribute to a living bacterium?
 - dependency on a universal model
 - hard to formulate growth media
 - growth objective may not always apply (e.g. toxicity, human tissues)
+- biomass reactions is generally hard to curate (generic fro gram type)
 
 ---
 

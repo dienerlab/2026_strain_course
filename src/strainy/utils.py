@@ -243,7 +243,7 @@ def gimme_treasure(file: str, compressed: bool = False) -> Path:
     return BASE / out
 
 
-def colormap(series: pd.Series[str]) -> pd.Series[tuple[float, float, float]]:
+def colormap(series: pd.Series) -> pd.Series:
     """Map each distinct string in a series to a discrete color.
 
     Parameters
@@ -264,8 +264,8 @@ def colormap(series: pd.Series[str]) -> pd.Series[tuple[float, float, float]]:
 
 
 def add_r_squared(
-    permanova_results: pd.Series[object],
-) -> pd.Series[object]:
+    permanova_results: pd.Series,
+) -> pd.Series:
     """Add the R-squared value to a PERMANOVA result.
 
     Parameters
