@@ -13,8 +13,26 @@ GASPEQ_APT = [
 
 SEQKIT_URL = "https://github.com/shenwei356/seqkit/releases/download/v2.14.0/seqkit_linux_amd64.tar.gz"
 
-def srun(cmd, check=True):
-    """Run a subprocess and print the command."""
+def srun(cmd: list[str], check: bool = True) -> subprocess.CompletedProcess[str]:
+    """Run a subprocess and print its output on failure.
+
+    Parameters
+    ----------
+    cmd : list of str
+        Command and arguments to execute.
+    check : bool, default=True
+        Whether a non-zero exit status raises ``RuntimeError``.
+
+    Returns
+    -------
+    subprocess.CompletedProcess[str]
+        Result of the subprocess.
+
+    Raises
+    ------
+    RuntimeError
+        If the command fails and ``check`` is true.
+    """
     result = subprocess.run(cmd, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False)
     if result.returncode != 0 and check:
         con.print(f"[bold red]Error running command:[/bold red] {' '.join(cmd)}")
@@ -23,14 +41,31 @@ def srun(cmd, check=True):
     return result
 
 
-def r_packages(pkgs):
-    """Install R packages."""
+def r_packages(pkgs: list[str]) -> str:
+    """Build an R expression to install packages.
+
+    Parameters
+    ----------
+    pkgs : list of str
+        Names of the R packages to install.
+
+    Returns
+    -------
+    str
+        R expression that installs the requested packages.
+    """
     cmd = f'install.packages(c({", ".join(["\"" + pkg + "\"" for pkg in pkgs])}))'
     return cmd
 
 
-def has_gapseq():
-    """Check if gapseq is installed."""
+def has_gapseq() -> bool:
+    """Check whether gapseq is installed and available.
+
+    Returns
+    -------
+    bool
+        Whether the gapseq help command succeeds with the expected output.
+    """
     try:
         r = srun(["gapseq", "-h"], check=False)
     except FileNotFoundError:
@@ -40,8 +75,14 @@ def has_gapseq():
     return status
 
 
-def am_i_colab():
-    """Check if running on colab."""
+def am_i_colab() -> bool:
+    """Check whether the current environment is Google Colab.
+
+    Returns
+    -------
+    bool
+        Whether the expected Colab files and environment variables are present.
+    """
     state = (
         os.path.exists("/content")
         and os.environ.get("HOME") == "/root"
@@ -51,8 +92,13 @@ def am_i_colab():
     return state
 
 
-def install_gapseq():
-    """Install gapseq."""
+def install_gapseq() -> None:
+    """Install gapseq, its dependencies, and its databases.
+
+    Returns
+    -------
+    None
+    """
     if not am_i_colab():
         con.print(
             ":fearful: This does not look like Colab, I better not touch anything."
@@ -75,7 +121,13 @@ def install_gapseq():
     con.print(":hammer: Done.")
 
 
-def install_seqkit():
+def install_seqkit() -> None:
+    """Download and install seqkit.
+
+    Returns
+    -------
+    None
+    """
     with TemporaryDirectory() as tmpdir:
         con.print(":hammer: Installing [green]seqkit[/green] [gray][1 m][/gray].")
         download(SEQKIT_URL, f"{tmpdir}/seqkit.tar.gz")
@@ -85,8 +137,13 @@ def install_seqkit():
         con.print(":hammer: Done.")
 
 
-def main():
-    """Install some dependencies."""
+def main() -> None:
+    """Install gapseq and seqkit dependencies in a Colab environment.
+
+    Returns
+    -------
+    None
+    """
     if am_i_colab():
         if not has_gapseq():
             install_gapseq()

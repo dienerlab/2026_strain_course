@@ -13,6 +13,8 @@ import seaborn as sns
 
 BASE = Path(".")
 DATA_URL = "https://raw.githubusercontent.com/dienerlab/2026_strain_course/refs/heads/main/data/"
+TREASURE_URL = "https://raw.githubusercontent.com/dienerlab/2026_strain_course/refs/heads/main/treasure_chest/"
+
 num_genomes = 51
 assemblies = pd.read_csv(
     "https://raw.githubusercontent.com/dienerlab/2026_strain_course/"
@@ -26,8 +28,20 @@ secret_names = {
     "Geoffrey Olweny": 51
 }
 
-def download_gzip(url, filename):
-    """Download and extract a gzipped URL to a file."""
+def download_gzip(url: str, filename: str | os.PathLike[str]) -> None:
+    """Download and extract a gzipped URL to a file.
+
+    Parameters
+    ----------
+    url : str
+        URL of the gzipped file.
+    filename : str or os.PathLike[str]
+        Destination path for the extracted file.
+
+    Returns
+    -------
+    None
+    """
     req = requests.get(url, stream=True)
     with TemporaryFile(suffix="fna.gz") as tfile:
         for chunk in req.iter_content(chunk_size=1024):
@@ -39,8 +53,20 @@ def download_gzip(url, filename):
             shutil.copyfileobj(inf, outf)
 
 
-def download(url, filename):
-    """Download URL to a file."""
+def download(url: str, filename: str | os.PathLike[str]) -> None:
+    """Download a URL to a file.
+
+    Parameters
+    ----------
+    url : str
+        URL of the file to download.
+    filename : str or os.PathLike[str]
+        Destination path for the downloaded file.
+
+    Returns
+    -------
+    None
+    """
     req = requests.get(url, stream=True)
     with open(filename, "wb") as f:
         for chunk in req.iter_content(chunk_size=1024):
@@ -49,24 +75,36 @@ def download(url, filename):
                 f.flush()
 
 
-def unzip(infile : Path, outfile : Path):
-    """Download and extract a gzipped URL to a file."""
+def unzip(infile: Path, outfile: Path) -> None:
+    """Extract a gzip file.
+
+    Parameters
+    ----------
+    infile : pathlib.Path
+        Path to the gzip file.
+    outfile : pathlib.Path
+        Destination path for the extracted file.
+
+    Returns
+    -------
+    None
+    """
     with gzip.open(infile, "rb") as inf, open(outfile, "wb") as outf:
         shutil.copyfileobj(inf, outf)
 
 
-def gimme_genome(name : str):
-    """Return a genome for the given name.
+def gimme_genome(name: str) -> None:
+    """Download the genome assembly assigned to a course participant.
 
-    Arguments
-    ---------
+    Parameters
+    ----------
     name : str
         Your name or nickname. Make it long and unique.
 
     Returns
     -------
-    Nothing, but prints a lot of info and downloads your genome assembly.
-
+    None
+        Downloads the assembly and prints information about it.
     """
     if name == "[YOUR NAME]":
         con.print(
@@ -113,19 +151,47 @@ def gimme_genome(name : str):
     )
 
 
-def gimme_abundances():
-    """Return a MICOM abundance table."""
+def gimme_abundances() -> pd.DataFrame:
+    """Load the MICOM abundance table.
+
+    Returns
+    -------
+    pandas.DataFrame
+        Abundance data for the course strains.
+    """
     return pd.read_csv(DATA_URL + "abundances.csv")
 
 
-def gimme_manifest():
-    """Return the strain manifest."""
+def gimme_manifest() -> pd.DataFrame:
+    """Download and load the strain manifest.
+
+    Returns
+    -------
+    pandas.DataFrame
+        Strain manifest data.
+    """
     download(DATA_URL + "strain_manifest.csv", BASE / "strain_manifest.csv")
     return pd.read_csv(BASE / "strain_manifest.csv")
 
 
-def gimme_medium(format="gapseq"):
-    """Return the medium."""
+def gimme_medium(format: str = "gapseq") -> pd.DataFrame:
+    """Load the growth medium in the requested format.
+
+    Parameters
+    ----------
+    format : str, default="gapseq"
+        Output format, either ``"gapseq"`` or ``"micom"``.
+
+    Returns
+    -------
+    pandas.DataFrame
+        Medium composition in the requested format.
+
+    Raises
+    ------
+    ValueError
+        If ``format`` is not ``"gapseq"`` or ``"micom"``.
+    """
     med = pd.read_csv(DATA_URL + "gut_medium_gapseq.csv")
     if format == "gapseq":
         return med
@@ -137,8 +203,14 @@ def gimme_medium(format="gapseq"):
         raise ValueError("format must be 'gapseq' or 'micom'.")
 
 
-def gimme_strain_db():
-    """Return the strain database."""
+def gimme_strain_db() -> pd.DataFrame:
+    """Download and load the strain model database.
+
+    Returns
+    -------
+    pandas.DataFrame
+        Strain model database manifest.
+    """
     from micom.db import load_zip_model_db
 
     download(DATA_URL + "infants_gtdb232_strain_1.zip", BASE / "infants_gtdb232_strain_1.zip")
@@ -148,8 +220,42 @@ def gimme_strain_db():
     return man
 
 
-def colormap(series : pd.Series):
-    """Build a discrete colormap for a bunch of strings."""
+def gimme_treasure(file: str, compressed: bool = False) -> Path:
+    """Download a file from the course treasure chest.
+
+    Parameters
+    ----------
+    file : str
+        Path of the file in the treasure chest.
+    compressed : bool, default=False
+        Whether the downloaded file is gzip-compressed.
+
+    Returns
+    -------
+    pathlib.Path
+        Path to the downloaded file.
+    """
+    out = Path(file).name
+    if compressed:
+        download_gzip(TREASURE_URL + file, BASE / out)
+    else:
+        download(TREASURE_URL + file, BASE / out)
+    return BASE / out
+
+
+def colormap(series: pd.Series[str]) -> pd.Series[tuple[float, float, float]]:
+    """Map each distinct string in a series to a discrete color.
+
+    Parameters
+    ----------
+    series : pandas.Series of str
+        Values to map to colors.
+
+    Returns
+    -------
+    pandas.Series of tuple of float
+        RGB color for each value, indexed like ``series``.
+    """
     levels = series.unique()
     palette = sns.color_palette(n_colors=len(levels))
     cmap = pd.Series({l: palette[i] for i, l in enumerate(levels)})
@@ -157,8 +263,21 @@ def colormap(series : pd.Series):
 
 
 
-def add_r_squared(permanova_results):
-    """Get the R2 for a PERMANOVA result."""
+def add_r_squared(
+    permanova_results: pd.Series[object],
+) -> pd.Series[object]:
+    """Add the R-squared value to a PERMANOVA result.
+
+    Parameters
+    ----------
+    permanova_results : pandas.Series
+        Result series returned by scikit-bio's ``permanova`` function.
+
+    Returns
+    -------
+    pandas.Series
+        The input results with an ``"R²"`` entry added.
+    """
     p = permanova_results
     r2 = 1 - 1 / (1 + p[4] * p[3] / (p[2] - p[3] - 1))
     p["R²"] = r2
