@@ -4,14 +4,29 @@ import os
 import shutil
 import subprocess
 from tempfile import TemporaryDirectory
+
 from .utils import con, download
 
 GASPEQ_APT = [
-    'apt-get', 'install', '-y', 'ncbi-blast+', 'git', 'libglpk-dev', 'r-base-core', 'bc', 'hmmer',
-    'curl', 'libcurl4-openssl-dev', 'libssl-dev', 'libsbml5-dev', 'diamond-aligner', 'mmseqs2'
+    "apt-get",
+    "install",
+    "-y",
+    "ncbi-blast+",
+    "git",
+    "libglpk-dev",
+    "r-base-core",
+    "bc",
+    "hmmer",
+    "curl",
+    "libcurl4-openssl-dev",
+    "libssl-dev",
+    "libsbml5-dev",
+    "diamond-aligner",
+    "mmseqs2",
 ]
 
 SEQKIT_URL = "https://github.com/shenwei356/seqkit/releases/download/v2.14.0/seqkit_linux_amd64.tar.gz"
+
 
 def srun(cmd: list[str], check: bool = True) -> subprocess.CompletedProcess[str]:
     """Run a subprocess and print its output on failure.
@@ -33,7 +48,9 @@ def srun(cmd: list[str], check: bool = True) -> subprocess.CompletedProcess[str]
     RuntimeError
         If the command fails and ``check`` is true.
     """
-    result = subprocess.run(cmd, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False)
+    result = subprocess.run(
+        cmd, text=True, capture_output=True, check=False
+    )
     if result.returncode != 0 and check:
         con.print(f"[bold red]Error running command:[/bold red] {' '.join(cmd)}")
         con.print(f"[bold red]Error message:[/bold red] {result.stderr}")
@@ -54,7 +71,7 @@ def r_packages(pkgs: list[str]) -> str:
     str
         R expression that installs the requested packages.
     """
-    cmd = f'install.packages(c({", ".join(["\"" + pkg + "\"" for pkg in pkgs])}))'
+    cmd = f"install.packages(c({', '.join(['"' + pkg + '"' for pkg in pkgs])}))"
     return cmd
 
 
@@ -104,9 +121,31 @@ def install_gapseq() -> None:
             ":fearful: This does not look like Colab, I better not touch anything."
         )
 
-    con.print(":hammer: Installing [green]gapseq[/green] dependencies [gray][18 m][/gray].")
+    con.print(
+        ":hammer: Installing [green]gapseq[/green] dependencies [gray][18 m][/gray]."
+    )
     srun(GASPEQ_APT)
-    srun(["R", "-s", "-e", r_packages(["data.table", "stringr", "getopt", "R.utils", "stringi", "jsonlite", "httr", "pak", "getopt", "BiocManager"])])
+    srun(
+        [
+            "R",
+            "-s",
+            "-e",
+            r_packages(
+                [
+                    "data.table",
+                    "stringr",
+                    "getopt",
+                    "R.utils",
+                    "stringi",
+                    "jsonlite",
+                    "httr",
+                    "pak",
+                    "getopt",
+                    "BiocManager",
+                ]
+            ),
+        ]
+    )
     srun(["R", "-s", "-e", "BiocManager::install('Biostrings')"])
     srun(["R", "-s", "-e", 'pak::pkg_install("Waschina/cobrar")'])
     con.print(":hammer: Done.")

@@ -1,15 +1,16 @@
 """Some helpers for the course."""
 
 import gzip
-import requests
-import pandas as pd
 import os
-from pathlib import Path
 import shutil
 from hashlib import sha256
-from tempfile import TemporaryFile, TemporaryDirectory
-from rich.console import Console
+from pathlib import Path
+from tempfile import TemporaryDirectory, TemporaryFile
+
+import pandas as pd
+import requests
 import seaborn as sns
+from rich.console import Console
 
 BASE = Path(".")
 DATA_URL = "https://raw.githubusercontent.com/dienerlab/2026_strain_course/refs/heads/main/data/"
@@ -23,10 +24,8 @@ assemblies = pd.read_csv(
 
 
 con = Console()
-secret_names = {
-    "Christian Diener": 50,
-    "Geoffrey Olweny": 51
-}
+secret_names = {"Christian Diener": 50, "Geoffrey Olweny": 51}
+
 
 def download_gzip(url: str, filename: str | os.PathLike[str]) -> None:
     """Download and extract a gzipped URL to a file.
@@ -122,8 +121,9 @@ def gimme_genome(name: str) -> None:
     if name not in secret_names:
         magic_number = int(sha256(name.encode()).hexdigest(), 16) % num_genomes
         con.print(
-            "Hi, [bold royal_blue1]{}[/bold royal_blue1]! "
-            "Welcome to the course :tada:".format(name))
+            f"Hi, [bold royal_blue1]{name}[/bold royal_blue1]! "
+            "Welcome to the course :tada:"
+        )
     else:
         magic_number = secret_names[name]
         con.print("Oooh, you are an instructor :star-struck: Thanks for helping out!")
@@ -132,7 +132,9 @@ def gimme_genome(name: str) -> None:
     assembly = assemblies.iloc[magic_number]
     aid = assembly["id"]
     os.environ["ASSEMBLY"] = aid
-    taxa = assembly[["domain", "phylum", "class", "order", "family", "genus", "species", "strain"]].values
+    taxa = assembly[
+        ["domain", "phylum", "class", "order", "family", "genus", "species", "strain"]
+    ].values
 
     try:
         download_gzip(DATA_URL + assembly["file"], BASE / f"{aid}.fna")
@@ -213,7 +215,9 @@ def gimme_strain_db() -> pd.DataFrame:
     """
     from micom.db import load_zip_model_db
 
-    download(DATA_URL + "infants_gtdb232_strain_1.zip", BASE / "infants_gtdb232_strain_1.zip")
+    download(
+        DATA_URL + "infants_gtdb232_strain_1.zip", BASE / "infants_gtdb232_strain_1.zip"
+    )
     with TemporaryDirectory() as tmpdir:
         man = load_zip_model_db(BASE / "infants_gtdb232_strain_1.zip", tmpdir)
 
@@ -262,7 +266,6 @@ def colormap(series: pd.Series) -> pd.Series:
     return pd.Series(cmap[series].values, index=series.index)
 
 
-
 def add_r_squared(
     permanova_results: pd.Series,
 ) -> pd.Series:
@@ -281,4 +284,4 @@ def add_r_squared(
     p = permanova_results
     r2 = 1 - 1 / (1 + p[4] * p[3] / (p[2] - p[3] - 1))
     p["R²"] = r2
-    return(p)
+    return p
