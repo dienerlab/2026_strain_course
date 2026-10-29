@@ -254,7 +254,7 @@ Let's get our results and see what we can learn.
 
 # Thanks :smile:
 
-We will take a lunch break and come back for part 3.
+Any open questions?
 
 <div style="display: flex; align-items: center; justify-content: space-evenly">
 
