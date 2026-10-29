@@ -2,7 +2,7 @@
 
 ## Strain-level metabolic modeling of microbial communities
 
-# Part 1: From genome to model
+# Part 1: From Genome to Model
 
 ### Christian Diener
 
@@ -50,38 +50,51 @@ Uses gene/transcript/protein/metabolite abundances (metagenomics, metatranscript
 
 Gene content provides insights into metabolic *capacity* or *potential*.
 
----
-
-<!-- .slide: data-background="var(--secondary)" class="dark" -->
-
-# Genes and metabolite abundances are cool and all, but what you should really care about are metabolic fluxes*
-
-<div class="footnote">
-
-hot take :fire:
-
-</div>
-
 
 ---
 
-## Fluxes
+## Sequencing
 
-<img src="assets/fluxes.png" width="45%">
-<video width="45%" autoplay loop>
-  <source src="assets/fluxes.mp4" type="video/mp4">
-</video>
-
-<div class="footnote">
-
-video courtesy of [S. Nayyak](https://twitter.com/Na_y_ak) and [J. Iwasa](https://twitter.com/janetiwasa)
-
-</div>
-
+<img src="assets/sequencing.png" width="100%">
 
 ---
 
-<!-- .slide: data-background="var(--secondary)" class="dark" -->
+## Shotgun Sequencing - the "old" reliable
+
+<img src="assets/shotgun.png" width="100%">
+
+---
+
+<img src="assets/qualities.png" width="60%">
+
+Based on some model from the sequencing machine. In ideal conditions each 10 points is an order of magnitude less
+error. Those are used for filtering and trimming the reads beforehand. So a quality score of 10 is 10% error rate. 20 is
+1%. 30 is 0.1%. 40 is 0.01%.
+Traditionally, one aims at a quality >20 (Q20, ~1% error rate). A 1% error rate means 1-2 false bases in a 150bp read.
+
+---
+
+## Nanopore Sequencing - quick and long reads
+
+<img src="assets/nanopore.png" width="100%">
+
+---
+
+## HiFi sequencing - long and exact
+
+<img src="assets/pacbio.png" width="100%">
+
+---
+
+<!-- .slide: data-background="var(--primary)" class="dark" -->
+
+## Let's switch to the notebook
+
+Great we have some basics now. Let's get our own *personal isolate genome* now :sparkles:
+
+---
+
+<!-- .slide: data-background="var(--primary)" class="dark" -->
 
 # How do we get from sequencing data to metabolic reactions?
 
@@ -89,6 +102,8 @@ Metabolic reactions are catalyzed by an organism's *enzymes*, which are encoded
 in its *genes*.
 
 So what we need is a *genome*.
+
+So we need to *assemble* our reads into a (preferably closed) genome.
 
 ---
 
@@ -106,11 +121,7 @@ So what we need is a *genome*.
 
 ## Finding genes
 
-<img src="assets/prodigal.png" width="80%">
-
-- finds open reading frames (ORFs)
-- identifies ribosomal binding sites and spacers
-- *really good* at identifying proteins
+<img src="assets/gene_finding.png" width="80%">
 
 <span class="footnote">
 
@@ -120,19 +131,22 @@ https://github.com/hyattpd/Prodigal
 
 ---
 
+
 <img src="assets/right.jpg" width="50%">
 
 ---
 
-<!-- .slide: data-background="var(--secondary)" class="dark" -->
+<!-- .slide: data-background="var(--primary)" class="dark" -->
 
 # Genome-Scale Metabolic Model Reconstruction
 
-When mapping to reference databases, we will only ever identify a small set (~1/3) of all enzymes and transporters in a given genome.
+The goal is to obtain the *full metabolic reaction network* from a given genome.
+
+When mapping to reference databases, we will only ever identify a small set (~1/2) of all enzymes and transporters in a given genome.
 
 We need to fill in the critical gaps in metabolic pathways by imposing *functional requirements* on the model.
 
-What's a reasonable requirement that you'd attribute to a living bacterium?
+What are reasonable requirements that *you* would attribute to a living bacterium?
 
 ---
 
@@ -143,6 +157,24 @@ What's a reasonable requirement that you'd attribute to a living bacterium?
 ---
 
 <img src="assets/reconstruction_strategies.png" width="90%">
+
+---
+
+## GAPSEQ
+
+<img src="assets/gapseq_overview.webp" width="70%">
+
+<div class="footnote">
+
+Zimmermann J, Kaleta C, Waschina S. Gapseq: Informed prediction of bacterial metabolic pathways and reconstruction of accurate metabolic models. Genome Biol. 2021;22: 81. https://doi.org/10.1186/s13059-021-02295-1
+
+</div>
+
+---
+
+## GAPSEQ Pathway prediction
+
+<img src="assets/gapseq.png" width="100%">
 
 ---
 
@@ -200,7 +232,64 @@ Let's go from an isolate genome assembly to a genome-scale metabolic model.
 
 ---
 
-<!-- .slide: data-background="var(--secondary)" class="dark" -->
+<!-- .slide: data-background="assets/backdrop.webp" class="dark" -->
+
+# Break time :coffee:
+
+---
+
+<!-- .slide: data-background="assets/backdrop.webp" class="dark" -->
+
+## Strain-level metabolic modeling of microbial communities
+
+# Part 2: From Model to Fluxes
+
+### Christian Diener
+
+<img src="assets/meduni/logo_slogan_dark.png" width="30%">
+
+from the *2026 Theodor Escherich Symposium*
+
+<br><br>
+<div class="footer">
+<a href="https://creativecommons.org/licenses/by-sa/4.0/"><i class="fa-solid fa-camera-retro"></i>internal</a>
+<a href="https://dienerlab.com"><i class="fa-solid fa-house-signal"></i></i>dienerlab.com</a>
+<a href="https://github.com/dienerlab"><i class="fa-brands fa-github"></i>dienerlab</a>
+<a href="https://bsky.app/profile/cdiener.com"><i class="fa-brands fa-bluesky"></i></i>@cdiener.com</a>
+</div>
+
+---
+
+<!-- .slide: data-background="var(--primary)" class="dark" -->
+
+# Genes and metabolite abundances are cool and all, but what you should really care about are metabolic fluxes*
+
+<div class="footnote">
+
+hot take :fire:
+
+</div>
+
+
+---
+
+## Fluxes
+
+<img src="assets/fluxes.png" width="45%">
+<video width="45%" autoplay loop>
+  <source src="assets/fluxes.mp4" type="video/mp4">
+</video>
+
+<div class="footnote">
+
+video courtesy of [S. Nayyak](https://twitter.com/Na_y_ak) and [J. Iwasa](https://twitter.com/janetiwasa)
+
+</div>
+
+
+---
+
+<!-- .slide: data-background="var(--primary)" class="dark" -->
 
 # Flux Balance Analysis (FBA)
 
@@ -226,13 +315,17 @@ The goal of FBA is to *reduce* the overall flux space to a *biologically relevan
 
 ---
 
-<!-- .slide: data-background="var(--secondary)" class="dark" -->
+<!-- .slide: data-background="var(--primary)" class="dark" -->
 
 # Optimal growth rate ≠ unique fluxes
 
 Even though FBA yields a unique estimate of the maximum growth rate, it does not give us a unique flux solution.
 
 Can we constrain the flux space even further?
+
+---
+
+<img src="assets/reduction.png" width="100%">
 
 ---
 
@@ -257,6 +350,12 @@ Uptake and secretion fluxes are much easier to measure than internal fluxes (e.g
 
 ---
 
+## Medium reconstruction
+
+<img src="assets/medium.png" width="80%">
+
+---
+
 ## Your turn
 
 Let's estimate the fluxes for our models.
@@ -265,83 +364,26 @@ Let's estimate the fluxes for our models.
 
 ---
 
-<!-- .slide: data-background="assets/isb/microbes-azure.jpg" class="dark" -->
-
-# Break :clock:
-
----
-
-<!-- .slide: data-background="assets/isb/data-midnight.jpg" class="dark" -->
-
-# Reverse ecology: inferring environmental interactions with metabolic models
-
-### Christian Diener, Gibbons Lab
-
-<img src="assets/isb/logo.png" width="40%">
-
-from the *2021 ISB Virtual Microbiome Series*
-
-<br>
-<div class="footer">
-<a href="https://creativecommons.org/licenses/by-sa/4.0/"><i class="fa fa-bullhorn"></i>CC-BY-SA</a>
-<a href="https://gibbons.isbscience.org/"><i class="fa fa-globe"></i>gibbons.isbscience.org</a>
-<a href="https://github.com/gibbons-lab"><i class="fa fa-github"></i>gibbons-lab</a>
-<a href="https://twitter.com/thaasophobia"><i class="fa fa-twitter"></i>@thaasophobia </a>
-</div>
-
-
----
-
 <!-- .slide: data-background="var(--primary)" class="dark" -->
 
-# Reverse ecology
+# Thanks :smile:
 
-[Ecology](https://en.wikipedia.org/wiki/Ecology) is the study of the relationships between living organisms and their physical environment.
+We will take a lunch break and come back for part 3.
 
-[Reverse Ecology](https://en.wikipedia.org/wiki/Reevrse_ecology) is the study of an organism's genome as a means to estimate its ecological niche.
+<div style="display: flex; align-items: center; justify-content: space-evenly">
 
----
+<div style="width: 40%">
 
-## Wait, why did we just stumble into Reverse Ecology?
+**MedUni Graz**<br>
+Geoffrey Olweny<br>
+Vanessa Csitkovics<br>
+Christine Moissl-Eichinger
 
-Systems Biology lingo:
->All strains were simulated under the exact same environmental conditions, but they each showed different *uptake rates* for different sets of metabolites to obtain their *maximum growth rate*.
 
-Ecology lingo:
->We estimated the *realized niche* of bacterial strains grown in isolation under an *optimal fitness* objective.
+</div><div style="width: 50%">
 
-What would it mean ecologically for two strains to inhabit very similar metabolic niches, or very different ones? Think about the human gut, where many of these strains may be present at the same time.
+**Funding**<br><br>
+<img src="assets/coe_logo_white.svg" width="50%">
+<img src="assets/meduni/logo_dark.png" width="20%">
 
----
-
-## Your turn
-
-Let's combine *all* the results.
-
-<img src="assets/coding.gif" width="50%">
-
----
-
-<!-- .slide: data-background="assets/isb/microbes-azure.jpg" class="dark" -->
-
-### And we are done :clap:
-
-<div style="display: flex; justify-content: space-around; align-items: center;">
-
-*ISB team* <br>
-Joey Petosa <br>
-Allison Kudla <br>
-Christian Diener <br>
-Sean Gibbons <br>
-Priyanka Baloni <br>
-Tomasz Wilmanski <br>
-Noa Rappaport <br>
-Alex Carr <br>
-Audri Hubbard <br>
-Renee Duprel <br>
-Joe Myxter <br>
-Thea Swanson
-
-# Thanks!
-
-</div>
+</div></div>
