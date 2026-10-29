@@ -1,8 +1,8 @@
-<!-- .slide: data-background="assets/isb/data-midnight.jpg" class="dark" -->
+<!-- .slide: data-background="assets/backdrop.webp" class="dark" -->
 
 ## Strain-level metabolic modeling of microbial communities
 
-# Part 1: From genome to model
+# Part 3: From model to fluxes
 
 ### Christian Diener
 
@@ -18,14 +18,74 @@ from the *2026 Theodor Escherich Symposium*
 <a href="https://bsky.app/profile/cdiener.com"><i class="fa-brands fa-bluesky"></i></i>@cdiener.com</a>
 </div>
 
-
 ---
 
 <!-- .slide: data-background="var(--primary)" class="dark" -->
 
 Let's get the slides first (use your computer, phone, TV, fridge)
 
-*https://dienerlab.github.io/2026_strain_course/reconstruction*
+*https://dienerlab.github.io/2026_strain_course/micom*
+
+
+---
+
+## A Complex System
+
+<div style="display: flex; align-items: center; justify-content: space-around">
+
+<div style="width: 40%">
+
+<img src="assets/motivation.svg" width="100%">
+
+</div>
+
+<div style="width: 50%">
+
+The intestinal metabolic environment is an *emergent property* of microbial, dietary and host interactions each consuming *and* providing specific metabolites.
+
+Microbial metabolite production can impact the host, e.g.
+- SCFA → colonoctye interactions
+- bile acids → FXR/TGR5,
+- pro- and anti-inflammatory compounds
+- hepatic metabolism
+
+How much of this can we glean from *genomic* data?
+
+</div>
+
+</div>
+
+---
+
+<!-- .slide: data-background="var(--primary)" class="dark" -->
+
+## Do we know enough of the rules to play the game?
+
+<br><br>
+
+Explaining the behavior of microbial communities through mechanisms by using *flux balance analysis (FBA)*.
+
+---
+
+## Our dataset
+
+<img src="assets/paper.png" width="100%">
+
+<div class="footnote">
+
+Baumann-Dudenhoeffer AM, D’Souza AW, Tarr PI, Warner BB, Dantas G. Infant diet and maternal gestational weight gain predict early metabolic maturation of gut microbiomes. Nat Med. 2018;24: 1822–1829. https://doi.org/10.1038/s41591-018-0216-2
+
+</div>
+
+---
+
+<img src="assets/relab_infants.png" width="100%">
+
+- 8 infants (4 vaginal birth, 4 cesarean)
+- different age groups and diets
+- 51 strains across the 8 infants (account for ~50% of abundance)
+
+*Are there differences in metabolic functions across infants?*
 
 ---
 
@@ -37,310 +97,179 @@ Let's get the slides first (use your computer, phone, TV, fridge)
 
 <br>
 
-<a href="https://colab.research.google.com/github/dienerlab/2026_strain_course/blob/main/models.ipynb"
+<a href="https://colab.research.google.com/github/dienerlab/2026_strain_course/blob/main/micom.ipynb"
    target="_blank">Click me to open the notebook!</a>
 
 ---
 
-# Functional analyses
+## Genome-scale metabolic models - pretty well-behaved
 
-Tries to predict what the microbiome *does* from sequencing data.
-
-Uses gene/transcript/protein/metabolite abundances (metagenomics, metatranscriptomics, proteomics or metabolomics).
-
-Gene content provides insights into metabolic *capacity* or *potential*.
-
----
-
-<!-- .slide: data-background="var(--secondary)" class="dark" -->
-
-# Genes and metabolite abundances are cool and all, but what you should really care about are metabolic fluxes*
+<img src="assets/gsmm.webp" width="100%">
 
 <div class="footnote">
 
-hot take :fire:
+Schuetz et al. 2012, https://doi.org/10.1126/science.1216882<br>
+Harcombe et al. 2013, https://doi.org/10.1371/journal.pcbi.1003091
 
 </div>
 
-
 ---
 
-## Fluxes
+## Community-scale metabolic models - pretty rowdy
 
-<img src="assets/fluxes.png" width="45%">
-<video width="45%" autoplay loop>
-  <source src="assets/fluxes.mp4" type="video/mp4">
-</video>
+<img src="assets/csmm.webp" width="100%">
 
 <div class="footnote">
 
-video courtesy of [S. Nayyak](https://twitter.com/Na_y_ak) and [J. Iwasa](https://twitter.com/janetiwasa)
+Diener et al. 2023, https://doi.org/10.1128/msystems.01270-22
 
 </div>
 
+----
+
+## They are also big...
+
+<img src="assets/model_gephi.png" width="70%">
+
+Genus-level metabolic model for the gut microbiome of a single individual.
 
 ---
 
-<!-- .slide: data-background="var(--secondary)" class="dark" -->
+<!-- .slide: data-background="var(--primary)" class="dark" -->
 
-# How do we get from sequencing data to metabolic reactions?
+## Let's switch to the notebook
 
-Metabolic reactions are catalyzed by an organism's *enzymes*, which are encoded
-in its *genes*.
-
-So what we need is a *genome*.
+We know how to build a community model now. Let's get started with that...
 
 ---
 
-## Genome Assembly with De Bruijn graphs
+<!-- .slide: data-background="var(--primary)" class="dark" -->
 
-![](assets/de_bruijn.png)
+## Uh-oh...
 
----
+So there is a well-defined community growth rate $\mu_C = \sum_i \alpha_i\mu_i$ but it does not need to be at its maximum.
 
-## Not so straight-forward
+And even *if* we knew $\mu_C$ this does not identify unique taxon-specific growth rates $\mu_i$.
 
-<img src="assets/assembly_graph_k59.png" height="700vh">
-
----
-
-## Finding genes
-
-<img src="assets/prodigal.png" width="80%">
-
-- finds open reading frames (ORFs)
-- identifies ribosomal binding sites and spacers
-- *really good* at identifying proteins
-
-<span class="footnote">
-
-https://github.com/hyattpd/Prodigal
-
-</span>
-
----
-
-<img src="assets/right.jpg" width="50%">
-
----
-
-<!-- .slide: data-background="var(--secondary)" class="dark" -->
-
-# Genome-Scale Metabolic Model Reconstruction
-
-When mapping to reference databases, we will only ever identify a small set (~1/3) of all enzymes and transporters in a given genome.
-
-We need to fill in the critical gaps in metabolic pathways by imposing *functional requirements* on the model.
-
-What's a reasonable requirement that you'd attribute to a living bacterium?
-
----
-
-## General strategy
-
-<img src="assets/reconstruction.png" width="80%">
-
----
-
-<img src="assets/reconstruction_strategies.png" width="90%">
-
----
-
-## Curated reconstructions
-
-*Curation* is the process of adding or removing reactions to/from the model based on experimental evidence.
+Just *great*, really :angry:
 
 <br>
 
-#### Basic
-
-- check structural quality ([MEMOTE](https://doi.org/10.1038/s41587-020-0446-y))
-- gap-filling on a standard growth medium (LB, M9, ...)
-- example: [carveME EMBL GEMs](https://github.com/cdanielmachado/embl_gems) - 5587 strains
-
-<br><br>
-
-#### Stringent
-
-- growth on various carbon sources (e.g. "likes maltose, but not glucose")
-- known metabolic conversion (e.g. "produces indole from tryptophan")
-- strain-specific biomass composition
-- example: [AGORA](https://www.vmh.life/#microbes/) - 818 strains from human gut
-
+We need a way to identify the growth rates $\mu_i$.
 
 ---
 
-|                | [carveME](https://doi.org/10.1093/nar/gky537) | [ModelSEED/Kbase](https://doi.org/10.1038/nbt.1672) | [gapseq](https://doi.org/10.1186/s13059-021-02295-1) |
-|----------------|-----------|-----------------|------------|
-| speed          | :smile:   | :pensive:       | :cry:      |
-| sensitivity    | :pensive: | :cry:           | :smile:    |
-| model quality  | :smile:   | :pensive:       | :smile:    |
-| free solver    | :cry:     | :pensive:       | :smile:    |
-| easy install   | :smile:   | :smile:         | :cry:      |
-| easy to use    | :pensive: | :smile:         | :cry:      |
-| many media     | :pensive: | :smile:         | :smile:*   |
-| SBML standard  | :smile:   | :smile:         | :smile:    |
+<!-- .slide: data-background="var(--primary)" class="dark" -->
 
+# Let's switch to the notebook
+
+Okay, that is all just too much. Let *future me* handle this...
+
+---
+
+## It's all just cones
+
+<img src="assets/growth_cone.png" width="60%">
+
+---
+
+<img src="assets/cones.gif" width="50%" class="centered">
+
+---
+
+## How to pick solutions from the growth cone
+
+<img src="assets/strategies.webp" width="80%">
+
+---
+
+## Properties of ctFBA
+
+ctFBA has some properties which intuitively make sense.
+
+1. An organism with non-zero abundance will receive a *non-zero growth rate* if the environment allows it.
+2. <i>Within a single sample</i> higher growth rate *leads to higher abundance*.
+3. Most common ecological interaction is *competition*.
+
+---
+
+<img src="assets/micom_quick.png" width="100%">
+
+That makes full community-scale metabolic models *usable*.
+
+But even curated metabolic models for many species do not capture the full complexity of
+metabolism. So are those models also *useful*?
+
+How do we *validate* the model predictions?
+
+---
+
+## Is it better than the status quo?
+
+<img src="assets/validation.png" width="100%">
+
+186 metagenome samples from Swedish and Danish individuals.<br>
+Manually curated metabolic models from the AGORA database.<br>
+Import fluxes based on an average European diet.
+
+<div class="footnote">
+
+Diener et al. 2020, https://doi.org/10.1128/mSystems.00606-19<br>
+Korem, Suez, Zeevi, Weinberger et al. 2015, https://dx.doi.org/10.1126%2Fscience.aac4812<br>
+Magnúsdóttir et al., https://doi.org/10.1038/nbt.3703
+</div>
+
+---
+
+<img src="assets/validation2.png" width="100%">
+
+<div class="footnote">
+
+Quinn-Bohmann et al. 2024, https://doi.org/10.1038/s41564-024-01728-4<br>
+Carr et al. 2025, https://doi.org/10.1016/j.cels.2025.101367<br>
+Quinn-Bohmann et al. 2026, https://doi.org/10.1371/journal.pbio.3003638
+
+</div>
+
+---
 
 ## Limitations
 
-- unknown enzymes/pathways are never captured
-- dependency on a universal model
-- hard to formulate growth media
-- growth objective may not always apply (e.g. toxicity, human tissues)
+- steady state assumption: can not *really* model abundance changes
+- hard to link with (relative) concentration data (for instance metabolomics)
+- limited by GSMM quality, many enzymes/metabolites not identified (bias towards CCM)
+- can only model growth-associated processes (no toxicity or secondary metabolism)
 
 ---
 
 ## Your turn
 
+Let's get our results and see what we can learn.
+
 <img src="assets/coding.gif" width="50%">
-
-Let's go from an isolate genome assembly to a genome-scale metabolic model.
-
----
-
-<!-- .slide: data-background="var(--secondary)" class="dark" -->
-
-# Flux Balance Analysis (FBA)
-
-Can we infer the most likely fluxes in a biological system, given a set of environmental constraints, if we know all
-available metabolic reactions?
-
----
-
-## The flux cone
-
-<img src="assets/flux_cone.png" width="100%">
-
-
----
-
-The goal of FBA is to *reduce* the overall flux space to a *biologically relevant* one.
-
----
-
-## Genome-scale metabolic modeling
-
-<img src="assets/fba.png" width="100%">
-
----
-
-<!-- .slide: data-background="var(--secondary)" class="dark" -->
-
-# Optimal growth rate ≠ unique fluxes
-
-Even though FBA yields a unique estimate of the maximum growth rate, it does not give us a unique flux solution.
-
-Can we constrain the flux space even further?
-
----
-
-## Selecting biologically relevant fluxes via parsimony
-
-<img src="assets/pfba.png" width="70%">
-
-- Bacteria do not like to produce more enzymes than necessary.
-- Zero flux = no enzyme required.
-- Parsimony reproduces experimental fluxes in <i>E. coli</i> [very well](https://dx.doi.org/10.1038%2Fmsb.2010.47).
 
 ---
 
 <!-- .slide: data-background="var(--primary)" class="dark" -->
 
-FBA results strongly depend on the *environmental conditions*. Finding
-uptake constraints is *critical* for realistic results.
+# Thanks :smile:
 
-Quantitative > qualitative >> unconstrained
+We will take a lunch break and come back for part 3.
 
-Uptake and secretion fluxes are much easier to measure than internal fluxes (e.g. you can use longitudinal metabolomics).
+<div style="display: flex; align-items: center; justify-content: space-evenly">
 
----
+<div style="width: 40%">
 
-## Your turn
-
-Let's estimate the fluxes for our models.
-
-<img src="assets/coding.gif" width="50%">
-
----
-
-<!-- .slide: data-background="assets/isb/microbes-azure.jpg" class="dark" -->
-
-# Break :clock:
-
----
-
-<!-- .slide: data-background="assets/isb/data-midnight.jpg" class="dark" -->
-
-# Reverse ecology: inferring environmental interactions with metabolic models
-
-### Christian Diener, Gibbons Lab
-
-<img src="assets/isb/logo.png" width="40%">
-
-from the *2021 ISB Virtual Microbiome Series*
-
-<br>
-<div class="footer">
-<a href="https://creativecommons.org/licenses/by-sa/4.0/"><i class="fa fa-bullhorn"></i>CC-BY-SA</a>
-<a href="https://gibbons.isbscience.org/"><i class="fa fa-globe"></i>gibbons.isbscience.org</a>
-<a href="https://github.com/gibbons-lab"><i class="fa fa-github"></i>gibbons-lab</a>
-<a href="https://twitter.com/thaasophobia"><i class="fa fa-twitter"></i>@thaasophobia </a>
-</div>
+**MedUni Graz**<br>
+Geoffrey Olweny<br>
+Vanessa Csitkovics<br>
+Christine Moissl-Eichinger
 
 
----
+</div><div style="width: 50%">
 
-<!-- .slide: data-background="var(--primary)" class="dark" -->
+**Funding**<br><br>
+<img src="assets/coe_logo_white.svg" width="50%">
+<img src="assets/meduni/logo_dark.png" width="20%">
 
-# Reverse ecology
-
-[Ecology](https://en.wikipedia.org/wiki/Ecology) is the study of the relationships between living organisms and their physical environment.
-
-[Reverse Ecology](https://en.wikipedia.org/wiki/Reevrse_ecology) is the study of an organism's genome as a means to estimate its ecological niche.
-
----
-
-## Wait, why did we just stumble into Reverse Ecology?
-
-Systems Biology lingo:
->All strains were simulated under the exact same environmental conditions, but they each showed different *uptake rates* for different sets of metabolites to obtain their *maximum growth rate*.
-
-Ecology lingo:
->We estimated the *realized niche* of bacterial strains grown in isolation under an *optimal fitness* objective.
-
-What would it mean ecologically for two strains to inhabit very similar metabolic niches, or very different ones? Think about the human gut, where many of these strains may be present at the same time.
-
----
-
-## Your turn
-
-Let's combine *all* the results.
-
-<img src="assets/coding.gif" width="50%">
-
----
-
-<!-- .slide: data-background="assets/isb/microbes-azure.jpg" class="dark" -->
-
-### And we are done :clap:
-
-<div style="display: flex; justify-content: space-around; align-items: center;">
-
-*ISB team* <br>
-Joey Petosa <br>
-Allison Kudla <br>
-Christian Diener <br>
-Sean Gibbons <br>
-Priyanka Baloni <br>
-Tomasz Wilmanski <br>
-Noa Rappaport <br>
-Alex Carr <br>
-Audri Hubbard <br>
-Renee Duprel <br>
-Joe Myxter <br>
-Thea Swanson
-
-# Thanks!
-
-</div>
+</div></div>
